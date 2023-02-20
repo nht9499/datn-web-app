@@ -1,0 +1,43 @@
+.disabled,
+[disabled],
+.q-btn.disabled,
+.q-toggle.disabled {
+  opacity: 0.4 !important;
+}
+
+.v-bg {
+  background-color: $bg;
+}
+
+.shadow-6 {
+  box-shadow: 0 4px 8px -4px rgba(94, 86, 105, 0.42);
+}
+
+.bg-blur {
+  background-color: hsla(0, 0%, 100%, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.bg-gradient-primary {
+  background: linear-gradient(90deg, $bg2 0%, $bg2 40%, $primary 100%);
+}
+
+.bg-primary-light {
+  background: rgba($color: $bg2, $alpha: 0.3);
+}
+
+.border-bottom {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.border-primary {
+  border: 1px solid $primary;
+}
+
+.absolute-top-center {
+  width: 400px;
+  position: absolute;
+  left: 50%;
+  top: 16px;
+  transform: translate(-50%);
+}

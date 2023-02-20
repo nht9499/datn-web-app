@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "datn-stag",
+    "production": "datn",
+    "staging": "datn-stag"
+  }
+}
