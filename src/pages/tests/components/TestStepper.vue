@@ -200,7 +200,9 @@
               type: templateSelected.value,
               numberOfKeyword: +numberOfKeyword.value,
               numberOfResult: +numberOfResult.value,
+              sendEmail: true,
             }
+            if (receiveWay.value === 'not') payload.sendEmail = false
             await executeTest(payload)
             stepper.value.next()
           } else if (step.value === 4) {

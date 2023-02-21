@@ -16,22 +16,44 @@ dayjs.extend(relativeTime)
 dayjs.locale('vi')
 type StatisticBy = 'byDay' | 'byWeek' | 'byMonth' | 'byYear'
 export const inject = () => ({
+  percentDiff(prev: number, now: number) {
+    if (now === 0 || prev === 0) return '-'
+    if (prev > now) return Math.round((prev / now - 1) * 100)
+    return Math.round((now / prev - 1) * 100)
+  },
+  getStatisticOptions() {
+    const listOptions = []
+    for (let i = 0; i < 12; i++) {
+      listOptions.push(dayjs().subtract(i, 'month').format('YYYY-MM'))
+    }
+    return listOptions
+  },
+  getStatMonthLabel(monthId: string) {
+    if (!monthId) return 'T'
+    return 'Tháng' + (dayjs(monthId).get('month') + 1)
+  },
+  getThisMonthFormat(date: Date) {
+    return dayjs(date).format('YYYY-MM')
+  },
+  getPrevMonthFormat(date: Date) {
+    return dayjs(date).subtract(1, 'month').format('YYYY-MM')
+  },
   randomNumber() {
-    return Math.floor(Math.random() * 1000000).toString();
+    return Math.floor(Math.random() * 1000000).toString()
   },
   getSizeDisplay(size: number) {
-    if (size >  1073741823) {
-      return Math.round(size / 1024 / 1024 / 1024 * 100) / 100 + ' GB'
+    if (size > 1073741823) {
+      return Math.round((size / 1024 / 1024 / 1024) * 100) / 100 + ' GB'
     }
     if (size > 1048575) {
-      return Math.round(size / 1024 / 1024 * 100) / 100 + ' MB'
+      return Math.round((size / 1024 / 1024) * 100) / 100 + ' MB'
     }
     if (size > 1023) {
-      return Math.round(size / 1024 * 100) / 100 + ' KB'
+      return Math.round((size / 1024) * 100) / 100 + ' KB'
     }
     return size + ' byte'
   },
-  
+
   dateFormat(timeStamp: string | number, patter = 'DD/MM/YYYY HH:mm') {
     if (!dayjs(timeStamp).isValid()) return ''
     return dayjs(timeStamp).format(patter)
@@ -112,9 +134,9 @@ export const inject = () => ({
     }
   },
   roundPercent(value: number) {
-    return Math.round(value * 1000) /10
+    return Math.round(value * 1000) / 10
   },
   removeUnique(value: string) {
-    return value.substring(value.indexOf("---") + 3)
-  }
+    return value.substring(value.indexOf('---') + 3)
+  },
 })

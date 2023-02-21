@@ -9,7 +9,7 @@ export const navConfigs: RouterLink[] = [
     icon: 'dashboard',
     path: '/dashboard',
     level: 0,
-    groups: [],
+    groups: [AppRole.admin, AppRole.staff],
     children: [],
   },
   // {

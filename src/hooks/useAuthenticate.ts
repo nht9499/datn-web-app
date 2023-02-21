@@ -1,6 +1,13 @@
 import { AppRole } from '@/constants/enums'
 import { useAsyncCall } from './useAsyncCall'
-import { signInWithEmailAndPassword, signOut as signOutApi, updatePassword, GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth'
+import {
+  signInWithEmailAndPassword,
+  signOut as signOutApi,
+  updatePassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  getAuth,
+} from 'firebase/auth'
 import { auth, db } from '@/services/config'
 import { doc, getDoc } from 'firebase/firestore'
 import { COLLECTION_NAME } from 'src/constants/enums'
@@ -38,17 +45,16 @@ export const useAuthenticate = () => {
       //   const userDoc = await getDoc(userRef)
       //   userSnap = userDoc.data()
       // }
-      await userApi.registerUser({email: response.email})
+      await userApi.registerUser({ email: response.email })
       console.log(response)
       authStore.setCurrentUser({
         ...response,
         currentUser: auth.currentUser?.toJSON(),
         userInfo: userSnap,
       })
-      console.log(role)
 
       // router.push(getRedirectConfig(role))
-      router.push('/tests')
+      router.push('/dashboard')
       // setSuccessMsg('auth/sign-success')
     } catch (error) {
       console.log(error)
@@ -58,30 +64,28 @@ export const useAuthenticate = () => {
     setLoading(false)
   }
 
-  const provider = new GoogleAuthProvider();
+  const provider = new GoogleAuthProvider()
   const signInWithGoogle = async () => {
     try {
       setLoading(true)
-      const auth = getAuth();
+      const auth = getAuth()
       const res = await signInWithPopup(auth, provider)
-      const credential = GoogleAuthProvider.credentialFromResult(res);
+      const credential = GoogleAuthProvider.credentialFromResult(res)
       // const token = credential?.accessToken;
       // The signed-in user info.
-      const user = res.user;
+      const user = res.user
       authStore.setCurrentUser({
         ...user,
         token: user.accessToken,
         currentUser: auth.currentUser?.toJSON(),
       })
-      await userApi.registerUser({email: user.email})
+      await userApi.registerUser({ email: user.email })
       const response: AnyObject = (await auth.currentUser?.getIdTokenResult()) ?? {}
       authStore.setCurrentUser({
         ...response,
         // token: user.accessToken,
         currentUser: auth.currentUser?.toJSON(),
       })
-      console.log(response)
-      console.log(authStore)
       router.push('/tests')
     } catch (error) {
       console.log(error)
