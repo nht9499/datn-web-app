@@ -3,11 +3,7 @@
     <div class="absolute-center z-top text-center">
       <h1 class="text-h4">Bạn không được ủy quyền! 🔐</h1>
       <p class="text-body1">
-        {{
-          authStore.isActiveAccount
-            ? 'Bạn không có quyền truy cập trang này!'
-            : 'Tài khoản của bạn đã bị khóa, vui lòng liên hệ người quản lý để được mở khóa!'
-        }}
+        {{ 'Bạn không có quyền truy cập trang này!' }}
       </p>
       <div class="full-width q-mx-auto q-my-lg">
         <q-img

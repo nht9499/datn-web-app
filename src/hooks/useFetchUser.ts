@@ -3,10 +3,7 @@ import { computed, ref } from 'vue'
 import { db } from '@/services/config'
 import { AppRole, COLLECTION_NAME } from '@/constants/enums'
 import { useAsyncCall } from './useAsyncCall'
-import {
-  getDoc,
-  doc,
-} from 'firebase/firestore'
+import { getDoc, doc } from 'firebase/firestore'
 import { userApi } from '@/api/user'
 
 export const useFetchUser = () => {
@@ -24,6 +21,7 @@ export const useFetchUser = () => {
       const docSnap = await getDoc(docRef)
       if (!docSnap.exists()) return
       const data = transformDoctorsResult(docSnap)
+      console.log(data)
       userDetail.value = data
     } catch (error) {
       const { message } = error as { message: string }
@@ -72,6 +70,6 @@ export const useFetchUser = () => {
     uploadFile,
     joinOrganization,
     removeFile,
-    shareFile
+    shareFile,
   }
 }

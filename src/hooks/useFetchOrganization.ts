@@ -3,10 +3,7 @@ import { computed, ref } from 'vue'
 import { db } from '@/services/config'
 import { AppRole, COLLECTION_NAME } from '@/constants/enums'
 import { useAsyncCall } from './useAsyncCall'
-import {
-  getDoc,
-  doc,
-} from 'firebase/firestore'
+import { getDoc, doc } from 'firebase/firestore'
 import { userApi } from '@/api/user'
 import { organizationApi } from '@/api/organization'
 
@@ -56,6 +53,9 @@ export const useFetchOrganization = () => {
   const shareFile = async (organizationUid: string, payload: any) => {
     await organizationApi.shareFile(organizationUid, payload)
   }
+  const removeFile = async (organizationUid: string, fileId: string) => {
+    await organizationApi.removeFile(organizationUid, fileId)
+  }
 
   const transformDoctorsResult = (doc: AnyObject) => {
     const snap = doc.data()
@@ -87,5 +87,6 @@ export const useFetchOrganization = () => {
     removeAdmin,
     fetchOrganizationById,
     shareFile,
+    removeFile,
   }
 }

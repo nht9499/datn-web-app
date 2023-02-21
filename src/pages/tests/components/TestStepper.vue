@@ -19,6 +19,21 @@
           <div>
             <q-radio v-model="templateSelected" val="internet" label="Kho ngữ liệu internet" />
           </div>
+          <div v-if="templateSelected === 'internet'" class="q-ml-md q-mt-sm">
+            <span class="text-bold q-ml-sm">Tùy chỉnh internet</span>
+            <div class="row q-gutter-md q-ml-md">
+              <q-input
+                style="width: 150px"
+                type="number"
+                v-model="numberOfKeyword"
+                label="Số lượng keyword" />
+              <q-input
+                style="width: 150px"
+                type="number"
+                v-model="numberOfResult"
+                label="Số lượng kết quả" />
+            </div>
+          </div>
           <div>
             <q-radio
               v-model="templateSelected"
@@ -138,6 +153,8 @@
       const files = ref()
       const listTestUrls = ref()
       const orgSelected = ref(null)
+      const numberOfKeyword = ref(3)
+      const numberOfResult = ref(1)
 
       const disableNext = computed(() => {
         if (step.value === 1 && templateSelected.value === 'organization' && !orgSelected.value)
@@ -181,8 +198,9 @@
               testList: listTestUrls.value,
               organizationUid: orgSelected.value,
               type: templateSelected.value,
+              numberOfKeyword: +numberOfKeyword.value,
+              numberOfResult: +numberOfResult.value,
             }
-            console.log(templateSelected.value)
             await executeTest(payload)
             stepper.value.next()
           } else if (step.value === 4) {
@@ -298,6 +316,8 @@
         disableNext,
         onPickFile,
         clickNext,
+        numberOfKeyword,
+        numberOfResult,
 
         authStore,
         pagination,

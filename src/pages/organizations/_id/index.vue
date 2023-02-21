@@ -76,7 +76,7 @@
                   </q-item-section>
                   <q-item-section class="text-body2">Chia sẻ với hệ thống</q-item-section>
                 </q-item>
-                <q-item
+                <!-- <q-item
                   :disable="props.row.sharedToSystem"
                   dense
                   clickable
@@ -86,7 +86,7 @@
                     <q-icon color="positive" size="xs" name="check_circle" />
                   </q-item-section>
                   <q-item-section class="text-body2">Kích hoạt tệp</q-item-section>
-                </q-item>
+                </q-item> -->
                 <q-item
                   :disable="props.row.sharedToSystem"
                   dense
@@ -96,7 +96,7 @@
                   <q-item-section avatar style="min-width: 12px" class="q-pr-sm">
                     <q-icon color="negative" size="xs" name="delete" />
                   </q-item-section>
-                  <q-item-section class="text-body2">Vô hiệu hóa tệp</q-item-section>
+                  <q-item-section class="text-body2">Xóa tệp</q-item-section>
                 </q-item>
               </q-list>
             </q-menu>
@@ -121,13 +121,18 @@
           <div>
             <span class="q-table__title">Danh sách thành viên</span>
           </div>
-          <q-btn
-            @click="clickAddNew"
-            outline
-            rounded
-            color="primary"
-            label="Thêm mới"
-            icon="add"></q-btn>
+          <q-btn outline rounded color="primary" label="Thêm mới" icon="add">
+            <q-menu>
+              <q-list style="min-width: 180px">
+                <q-item dense clickable v-close-popup @click="dialogAddMember = true">
+                  <q-item-section class="text-body2">Thêm mới thành viên</q-item-section>
+                </q-item>
+                <q-item dense clickable v-close-popup @click="dialogAddAdmin = true">
+                  <q-item-section class="text-body2">Thêm mới quản lý</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
         </div>
       </template>
 
@@ -145,24 +150,17 @@
             icon-right="expand_more">
             <q-menu>
               <q-list style="min-width: 180px">
-                <!-- <q-item dense clickable v-close-popup @click="clickEdit(props.row)">
-                  <q-item-section avatar style="min-width: 12px" class="q-pr-sm">
-                    <q-icon size="xs" name="edit" />
-                  </q-item-section>
-                  <q-item-section class="text-body2">Thông tin chi tiết</q-item-section>
-                </q-item> -->
-                <q-item disable dense clickable v-close-popup @click="handleShareFile(props.row)">
-                  <!-- <q-item-section avatar style="min-width: 12px" class="q-pr-sm">
-                    <q-icon size="xs" name="share" />
-                  </q-item-section> -->
+                <q-item
+                  :disable="authStore.uid === props.row.uid"
+                  dense
+                  clickable
+                  v-close-popup
+                  @click="handleRemoveMember(props.row)">
                   <q-item-section class="text-body2">Xóa thành viên</q-item-section>
                 </q-item>
-                <q-item disable dense clickable v-close-popup @click="activeFile(props.row)">
-                  <!-- <q-item-section avatar style="min-width: 12px" class="q-pr-sm">
-                    <q-icon color="positive" size="xs" name="check_circle" />
-                  </q-item-section> -->
+                <!-- <q-item dense clickable v-close-popup @click="handleRemoveAdmin(props.row)">
                   <q-item-section class="text-body2">Xóa quyền quản lý</q-item-section>
-                </q-item>
+                </q-item> -->
               </q-list>
             </q-menu>
           </q-btn>
@@ -205,6 +203,38 @@
       </q-card-section>
     </q-card>
   </q-dialog>
+  <q-dialog v-model="dialogAddMember">
+    <q-card class="q-pa-md">
+      <q-card-section>
+        Nhập ID của người dùng để thêm thành viên
+        <q-input v-model="addMemberUid" label="ID người dùng" />
+      </q-card-section>
+      <q-card-action class="q-pl-md">
+        <q-btn
+          no-caps
+          @click="clickAddMember"
+          :disable="!addMemberUid"
+          color="primary"
+          label="Thêm mới" />
+      </q-card-action>
+    </q-card>
+  </q-dialog>
+  <q-dialog v-model="dialogAddAdmin">
+    <q-card class="q-pa-md">
+      <q-card-section>
+        Nhập ID của người dùng để thêm người quản lý
+        <q-input v-model="addAdminUid" label="ID người dùng" />
+      </q-card-section>
+      <q-card-action class="q-pl-md">
+        <q-btn
+          no-caps
+          @click="clickAddAdmin"
+          :disable="!addAdminUid"
+          color="primary"
+          label="Thêm mới" />
+      </q-card-action>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script lang="ts">
@@ -232,8 +262,17 @@
         showNotify,
         showDialog,
       } = useEnhancer()
-      const { fetchOrganizationById, organizationDetail, uploadFile, shareFile } =
-        useFetchOrganization()
+      const {
+        fetchOrganizationById,
+        organizationDetail,
+        uploadFile,
+        shareFile,
+        addMember,
+        removeMember,
+        addAdmin,
+        removeAdmin,
+        removeFile,
+      } = useFetchOrganization()
       const { uploadImage } = useImage()
 
       const pagination = ref({
@@ -256,6 +295,10 @@
       const files = ref()
       const listTemplateUrls = ref()
       const dataMember = ref()
+      const dialogAddMember = ref(false)
+      const addMemberUid = ref()
+      const dialogAddAdmin = ref(false)
+      const addAdminUid = ref()
 
       const mockData = [
         {
@@ -304,6 +347,13 @@
           label: 'Uid',
           align: 'left',
           field: (row: AnyObject) => row.uid,
+        },
+        {
+          name: 'email',
+          required: true,
+          label: 'Email',
+          align: 'left',
+          field: (row: AnyObject) => row.email,
         },
         { name: 'actions', align: 'center', label: '', field: 'name' },
       ])
@@ -382,7 +432,7 @@
       const activeFile = (file: any) => {
         showDialog({
           title: 'Xác nhận',
-          message: `Kích hoạt têp ${file.name}`,
+          message: `Chia sẻ tệp ${file.name} với hệ thống`,
           ok: {
             noCaps: true,
             label: 'Đồng ý',
@@ -401,10 +451,30 @@
             // console.log('>>>> Cancel')
           })
       }
+
+      const clickAddMember = async () => {
+        if (!addMemberUid.value) return
+        showGlobalLoading()
+        await addMember(route.params.id as string, addMemberUid.value)
+        dialogAddMember.value = false
+        await fetchOrganizationById(route.params.id as string)
+        computeDataMember()
+        hideGlobalLoading()
+      }
+      const clickAddAdmin = async () => {
+        if (!addAdminUid.value) return
+        showGlobalLoading()
+        await addAdmin(route.params.id as string, addAdminUid.value)
+        dialogAddAdmin.value = false
+        await fetchOrganizationById(route.params.id as string)
+        computeDataMember()
+        hideGlobalLoading()
+      }
+
       const deactiveFile = (file: any) => {
         showDialog({
           title: 'Xác nhận',
-          message: `Vô hiệu hóa tệp ${file.name}`,
+          message: `Xóa tệp ${file.name} khỏi tổ chức`,
           ok: {
             noCaps: true,
             label: 'Đồng ý',
@@ -416,12 +486,80 @@
           },
           persistent: true,
         })
-          .onOk(() => {
-            console.log('ok')
+          .onOk(async () => {
+            showGlobalLoading()
+            await removeFile(route.params.id as string, file.uid)
+            await fetchOrganizationById(route.params.id as string)
+            computeDataMember()
+            hideGlobalLoading()
           })
           .onCancel(() => {
             // console.log('>>>> Cancel')
           })
+      }
+
+      const handleRemoveMember = (user: any) => {
+        showDialog({
+          title: 'Xác nhận',
+          message: `Xóa thành viên ${user.email}`,
+          ok: {
+            noCaps: true,
+            label: 'Đồng ý',
+          },
+          cancel: {
+            flat: true,
+            noCaps: true,
+            label: 'Hủy',
+          },
+          persistent: true,
+        })
+          .onOk(async () => {
+            showGlobalLoading()
+            await removeMember(route.params.id as string, user.uid)
+            await fetchOrganizationById(route.params.id as string)
+            computeDataMember()
+            hideGlobalLoading()
+          })
+          .onCancel(() => {
+            // console.log('>>>> Cancel')
+          })
+      }
+
+      const handleRemoveAdmin = (user: any) => {
+        showDialog({
+          title: 'Xác nhận',
+          message: `Xóa người quản lý ${user.email}`,
+          ok: {
+            noCaps: true,
+            label: 'Đồng ý',
+          },
+          cancel: {
+            flat: true,
+            noCaps: true,
+            label: 'Hủy',
+          },
+          persistent: true,
+        })
+          .onOk(async () => {
+            showGlobalLoading()
+            await removeAdmin(route.params.id as string, user.uid)
+            await fetchOrganizationById(route.params.id as string)
+            hideGlobalLoading()
+          })
+          .onCancel(() => {
+            // console.log('>>>> Cancel')
+          })
+      }
+
+      const computeDataMember = () => {
+        const list = []
+        organizationDetail?.value?.memberList?.map((member: any) => {
+          list.push({
+            uid: member.uid,
+            email: member.email,
+          })
+        })
+        dataMember.value = list
       }
       watch(
         () => route.params,
@@ -429,15 +567,16 @@
           showGlobalLoading()
           const params = newParams
           await fetchOrganizationById(params.id as string)
-          console.log(organizationDetail.value)
           const list = []
-          organizationDetail?.value?.memberUidList?.map((member: any) => {
+          organizationDetail?.value?.memberList?.map((member: any) => {
             list.push({
-              uid: member,
+              uid: member.uid,
+              email: member.email,
             })
           })
           dataMember.value = list
-          console.log(dataMember.value)
+          const isAdmin = organizationDetail.value?.adminUidList?.includes(authStore.uid) ?? false
+          if (!isAdmin) router.push('/403')
           hideGlobalLoading()
         },
         {
@@ -445,6 +584,14 @@
         }
       )
       return {
+        dialogAddMember,
+        addMemberUid,
+        dialogAddAdmin,
+        addAdminUid,
+        clickAddMember,
+        clickAddAdmin,
+        handleRemoveMember,
+        handleRemoveAdmin,
         mockData,
         authStore,
         pagination,

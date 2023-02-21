@@ -18,5 +18,5 @@
 <route lang="yaml">
 meta:
   requiresAuth: true
-  title: 'Quản lý Bác sĩ'
+  title: 'Lịch sử kiểm tra'
 </route>
