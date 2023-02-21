@@ -67,7 +67,12 @@
                   </q-item-section>
                   <q-item-section class="text-body2">Thông tin chi tiết</q-item-section>
                 </q-item> -->
-                <q-item dense clickable v-close-popup @click="handleShareFile(props.row)">
+                <q-item
+                  :disable="props.row.sharedToSystem"
+                  dense
+                  clickable
+                  v-close-popup
+                  @click="handleShareFile(props.row)">
                   <q-item-section avatar style="min-width: 12px" class="q-pr-sm">
                     <q-icon size="xs" name="share" />
                   </q-item-section>
@@ -84,12 +89,7 @@
                   </q-item-section>
                   <q-item-section class="text-body2">Kích hoạt tệp</q-item-section>
                 </q-item> -->
-                <q-item
-                  :disable="props.row.sharedToSystem || authStore.role !== 'user'"
-                  dense
-                  clickable
-                  v-close-popup
-                  @click="deactiveFile(props.row)">
+                <q-item dense clickable v-close-popup @click="deactiveFile(props.row)">
                   <q-item-section avatar style="min-width: 12px" class="q-pr-sm">
                     <q-icon color="negative" size="xs" name="delete" />
                   </q-item-section>
@@ -105,7 +105,9 @@
   <q-dialog v-model="dialogAddNew">
     <q-card class="q-pa-md">
       <q-card-section>
-        <p class="text-h6 q-mb-md">Thêm các tệp mẫu vào kho ngữ liệu của bạn</p>
+        <p class="text-h6 q-mb-md">
+          Thêm các tệp mẫu vào kho ngữ liệu {{ authStore.role === 'user' ? 'của bạn' : 'hệ thống' }}
+        </p>
         <div class="q-ml-md">
           <q-btn
             size="md"
