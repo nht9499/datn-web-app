@@ -127,7 +127,6 @@
   import { defineComponent, ref, computed, onMounted, ComputedRef } from 'vue'
   import { QTableProps } from 'quasar'
   import { useEnhancer } from '@/app/enhancer'
-  import { useFetchDoctors } from '@/hooks/useFetchDoctors'
   import { useFetchTest } from '@/hooks/useFetchTest'
   import { useImage } from '@/hooks/useImage'
   import defaultAvatar from '@/assets/img/default_avatar.png'
@@ -139,7 +138,6 @@
     name: 'TestStepper',
     components: {},
     setup() {
-      const { loading, fetchDoctors, listDoctors, isLoadmore } = useFetchDoctors()
       const { executeTest } = useFetchTest()
       const { route, router, authStore, showGlobalLoading, hideGlobalLoading } = useEnhancer()
       const { uploadImage } = useImage()
@@ -299,7 +297,6 @@
       }
 
       const clickEdit = (row: AnyObject) => {
-        console.log(listDoctors.value)
         // router.push({ name: 'doctors-id', params: { id: row.uid } })
       }
 
@@ -323,10 +320,7 @@
 
         authStore,
         pagination,
-        listDoctors,
         columns,
-        loading,
-        isLoadmore,
         clickEdit,
         onLoadmore,
         Status,

@@ -83,7 +83,6 @@
   import { defineComponent, ref, computed, onMounted, ComputedRef } from 'vue'
   import { QTableProps } from 'quasar'
   import { useEnhancer } from '@/app/enhancer'
-  import { useFetchDoctors } from '@/hooks/useFetchDoctors'
   import defaultAvatar from '@/assets/img/default_avatar.png'
   import { useFetchTestResult } from '@/hooks/useFetchTestResults'
   // import globalFilter from '@/helpers/filters'
@@ -94,7 +93,6 @@
     components: {},
     setup() {
       const { fetchTests, listTests } = useFetchTestResult()
-      const { loading, fetchDoctors, listDoctors, isLoadmore } = useFetchDoctors()
       const { route, router, authStore, showGlobalLoading, hideGlobalLoading } = useEnhancer()
       const pagination = ref({
         sortBy: 'updatedAt',
@@ -154,10 +152,7 @@
         mockData,
         authStore,
         pagination,
-        listDoctors,
         columns,
-        loading,
-        isLoadmore,
         clickEdit,
         onLoadmore,
         Status,

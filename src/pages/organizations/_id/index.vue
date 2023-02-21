@@ -241,7 +241,6 @@
   import { defineComponent, ref, computed, watch, ComputedRef } from 'vue'
   import { QTableProps } from 'quasar'
   import { useEnhancer } from '@/app/enhancer'
-  import { useFetchDoctors } from '@/hooks/useFetchDoctors'
   import defaultAvatar from '@/assets/img/default_avatar.png'
   import globalFilter from '@/helpers/filters'
   import { Status } from '@/constants/enums'
@@ -252,7 +251,6 @@
     name: 'OrganizationsDetail',
     components: {},
     setup() {
-      const { loading, fetchDoctors, listDoctors, isLoadmore } = useFetchDoctors()
       const {
         route,
         router,
@@ -358,12 +356,7 @@
         { name: 'actions', align: 'center', label: '', field: 'name' },
       ])
 
-      const onLoadmore = () => {
-        fetchDoctors(route.query, true)
-      }
-
       const clickEdit = (row: AnyObject) => {
-        console.log(listDoctors.value)
         // router.push({ name: 'doctors-id', params: { id: row.uid } })
       }
       const clickAddNew = () => {
@@ -595,12 +588,8 @@
         mockData,
         authStore,
         pagination,
-        listDoctors,
         columns,
-        loading,
-        isLoadmore,
         clickEdit,
-        onLoadmore,
         Status,
         defaultAvatar,
         dialogAddNew,

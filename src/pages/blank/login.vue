@@ -75,7 +75,6 @@
 <script lang="ts">
   import { computed, defineComponent, ref } from 'vue'
   import { useAuthenticate } from '@/hooks/useAuthenticate'
-  import { useFetchSettings } from '@/hooks/useFetchSettings'
   import BlankWrap from './components/BlankWrap.vue'
   import { testPattern } from '@/util/pattern'
   import { META } from '@/configs/app.config'
@@ -89,7 +88,6 @@
     setup() {
       // TODO: define use
       const { signIn, loading, signInWithGoogle } = useAuthenticate()
-      const { fetchSettings } = useFetchSettings()
 
       const formAuth = ref()
       const email = ref('')
@@ -105,7 +103,7 @@
 
       const handleSignIn = async () => {
         await signIn({ email: email.value, password: password.value })
-        await fetchSettings()
+        // await fetchSettings()
       }
       const signInWithGG = async () => {
         await signInWithGoogle()
