@@ -88,6 +88,29 @@
       </q-card-section>
     </q-card-section>
   </q-card>
+  <vue-final-modal
+    v-model="afterCallDialog"
+    ref="incomingCall"
+    classes="modal-container rounded-borders shadow-2"
+    content-class="modal-content"
+    :click-to-close="false"
+    :esc-to-close="false"
+    :z-index-base="9999"
+    prevent-click
+    hide-overlay
+    drag>
+    <q-card style="width: 300px">
+      <q-card-section>
+        <div class="text-h6">Chọn tệp kiểm tra và tệp mẫu để xem chi tiết</div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        <span class="text-body2 text-weight-medium">
+          Bạn có muốn tạo yêu cầu mới cho người dùng
+        </span>
+      </q-card-section>
+    </q-card>
+  </vue-final-modal>
 </template>
 
 <script lang="ts">
@@ -96,10 +119,11 @@
   import { useFetchTestResult } from '@/hooks/useFetchTestResults'
   import globalFilter from '@/helpers/filters'
   import { api } from '@/modules/axios'
+  import { VueFinalModal } from 'vue-final-modal'
   // import { driver } from '@/constants/define'
   export default defineComponent({
     name: 'HistoriesDetail',
-    components: {},
+    components: { VueFinalModal },
     setup() {
       const { route, router, showNotify, authStore } = useEnhancer()
       const { getTestResultById, resultData } = useFetchTestResult()
@@ -319,6 +343,16 @@
 </script>
 
 <style lang="scss" scoped>
+  :deep(.modal-container) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: all-scroll;
+  }
+  .modal__content {
+    flex-grow: 1;
+    overflow-y: auto;
+  }
   :deep(.table-staff) {
     max-height: 100%;
     max-width: 100%;
