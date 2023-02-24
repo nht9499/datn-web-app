@@ -253,3 +253,10 @@ export enum TestType {
   organization = 'organization',
   system = 'system',
 }
+
+export const similarMethodlist = ['cross', 'vi', 'en']
+export enum SimilarMethod {
+  cross = 'cross',
+  vi = 'vi',
+  en = 'en',
+}

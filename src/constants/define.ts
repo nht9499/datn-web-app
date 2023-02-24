@@ -18,6 +18,7 @@ import {
   TransferStatus,
   TestStatus,
   TestType,
+  SimilarMethod,
 } from './enums'
 
 export const auth = {
@@ -324,5 +325,12 @@ export const testType = {
     [TestType.internet]: 'Internet',
     [TestType.organization]: 'Tổ chức',
     [TestType.system]: 'Hệ thống',
+  } as AnyObject,
+}
+export const similarMethod = {
+  label: {
+    [SimilarMethod.cross]: 'Xuyên ngữ',
+    [SimilarMethod.vi]: 'Tiếng Việt',
+    [SimilarMethod.en]: 'Tiếng Anh',
   } as AnyObject,
 }

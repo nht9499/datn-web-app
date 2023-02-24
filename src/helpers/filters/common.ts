@@ -2,7 +2,7 @@ import { format } from 'quasar'
 import dayjs from 'dayjs'
 import 'dayjs/locale/vi'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { auth, testType } from '@/constants/define'
+import { auth, similarMethod, testType } from '@/constants/define'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
@@ -86,6 +86,9 @@ export const inject = () => ({
   },
   getTestType(key: string) {
     return testType.label?.[key] ?? ''
+  },
+  getSimilarMethod(key: string) {
+    return similarMethod.label?.[key] ?? ''
   },
   currencyFormat(value: string | number, showCurrency = true) {
     const maximumSignificantDigits = `${value}`.length - 3

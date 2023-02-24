@@ -29,7 +29,9 @@
               </div>
             </div>
             <div v-if="contentSelected" class="q-mx-xl q-mt-lg">
-              <span class="text-bold">Câu đã chọn: </span>
+              <div class="text-center">
+                <span class="text-bold text-h6">Câu đã chọn</span>
+              </div>
               <q-scroll-area v-if="contentSelected?.content" visible style="height: 100px">
                 <div>
                   {{ contentSelected.content }}
@@ -38,11 +40,19 @@
             </div>
           </div>
           <div class="col">
-            <div>
-              <div class="text-center">
-                <span class="text-bold text-h6">Các câu tương đồng</span>
+            <div class="text-center q-mb-lg">
+              <q-btn
+                outline
+                no-caps
+                color="primary"
+                label="Chọn file khác"
+                @click="dialogPick = true"></q-btn>
+            </div>
+            <div v-if="listContentMatch?.length > 0">
+              <div class="text-center q-pt-md">
+                <span class="text-bold text-h6">Câu tương đồng</span>
               </div>
-              <q-scroll-area v-if="listContentMatch?.length > 0" visible style="height: 170px">
+              <q-scroll-area visible style="height: 100px">
                 <div
                   @click="clickSentence(data)"
                   v-for="data in listContentMatch"
@@ -58,8 +68,14 @@
         </div>
       </q-card-section>
       <q-card-section class="row q-gutter-md">
-        <q-scroll-area ref="testScrollRef" class="col" visible style="height: 400px">
+        <q-scroll-area
+          v-if="!dialogPick"
+          ref="testScrollRef"
+          class="col"
+          visible
+          style="height: 400px">
           <div class="text-h4 q-mb-md">Văn bản kiểm tra</div>
+          <p v-if="dataTest" class="text-h5">{{ $filters.removeUnique(dataTest.name) }}</p>
           <div ref="testRef">
             <span
               @click="selectedDataTest(data, idx)"
@@ -71,13 +87,19 @@
             </span>
           </div>
         </q-scroll-area>
-        <q-scroll-area ref="templateScrollRef" class="col" visible style="height: 400px">
+        <q-scroll-area
+          v-if="!dialogPick"
+          ref="templateScrollRef"
+          class="col"
+          visible
+          style="height: 400px">
           <div class="text-h4 q-mb-md">Văn bản mẫu</div>
+          <p v-if="dataTemplate" class="text-h5">
+            {{ $filters.removeUnique(dataTemplate[0]?.name) }}
+          </p>
           <div ref="templateRef" v-for="data in dataTemplate" :key="data.id">
-            <p class="text-bold">{{ $filters.removeUnique(data.name) }}</p>
             <span
-              @click="selectedDataTemplate(contentData, idxContent)"
-              v-for="(contentData, idxContent) in data?.data"
+              v-for="contentData in data?.data"
               :key="contentData.id"
               class="q-mr-xs"
               :class="contentData.class">
@@ -89,7 +111,8 @@
     </q-card-section>
   </q-card>
   <vue-final-modal
-    v-model="afterCallDialog"
+    v-model="dialogPick"
+    v-slot="{ close }"
     ref="incomingCall"
     classes="modal-container rounded-borders shadow-2"
     content-class="modal-content"
@@ -99,15 +122,61 @@
     prevent-click
     hide-overlay
     drag>
-    <q-card style="width: 300px">
+    <q-card style="width: 900px">
       <q-card-section>
-        <div class="text-h6">Chọn tệp kiểm tra và tệp mẫu để xem chi tiết</div>
+        <div class="text-h6 text-center">Chọn tệp kiểm tra và tệp mẫu để xem chi tiết</div>
       </q-card-section>
 
-      <q-card-section class="q-pt-none">
-        <span class="text-body2 text-weight-medium">
-          Bạn có muốn tạo yêu cầu mới cho người dùng
-        </span>
+      <q-card-section>
+        <div class="row q-gutter-md">
+          <div class="col border">
+            <div class="text-center">
+              <span class="text-bold text-h6">Chọn tệp kiểm tra </span>
+            </div>
+            <q-scroll-area visible style="height: 200px">
+              <div
+                :class="data.class"
+                class="q-py-xs cursor-pointer"
+                v-for="(data, index) in listTestFile"
+                :key="data.id">
+                <div
+                  style="font-size: 1.1rem; font-weight: 600"
+                  @click="selectedFileTest(data, index)">
+                  - {{ $filters.removeUnique(data.name) }}
+                </div>
+                <div v-if="data.url" class="text-blue">
+                  <a :href="data.url">{{ data.url }}</a>
+                </div>
+              </div>
+            </q-scroll-area>
+          </div>
+          <!-- <q-separator vertical class="q-mx-sm" /> -->
+          <div class="col border">
+            <div>
+              <div class="text-center">
+                <span class="text-bold text-h6">Các tệp tương đồng</span>
+              </div>
+              <q-scroll-area visible style="height: 200px">
+                <div
+                  v-for="data in listTemplateFileMap"
+                  :key="data.id"
+                  class="q-py-xs cursor-pointer text-body1">
+                  <div @click="selectedFileTemplate(data, close)">
+                    - <span>{{ $filters.getSimilarMethod(data.type) }} </span> -
+                    <span class="text-bold">{{ $filters.roundPercent(data.score) }}% </span> -
+                    {{ data.quantity }} câu tương đồng ở ngưỡng 80%
+                    <div style="font-size: 1.1rem; font-weight: 600">
+                      {{ $filters.removeUnique(data.name) }}
+                    </div>
+                  </div>
+                  <div v-if="data.data.url" class="text-blue">
+                    <a :href="data.data.url">{{ data.data.url }}</a>
+                  </div>
+                </div>
+              </q-scroll-area>
+            </div>
+          </div>
+        </div>
       </q-card-section>
     </q-card>
   </vue-final-modal>
@@ -167,18 +236,22 @@
         readJsonFileTemplate(blobB)
       })
 
+      const dialogPick = ref(true)
       const dataTest = ref()
       const dataTemplate = ref()
-      const minScore = ref(97)
+      const minScore = ref(80)
       const testScrollRef = ref()
       const templateScrollRef = ref()
+      const listTestFile = ref()
+      const listTemplateFile = ref()
+      const listTemplateFileMap = ref()
 
       const readJsonFile = (file: any) => {
         const reader: any = new FileReader()
         reader.onload = () => {
           const data = JSON.parse(reader.result)
-          dataTest.value = computeClass(data[0])
-          return data
+          // dataTest.value = computeClass(data[0])
+          listTestFile.value = data
         }
         reader.readAsText(file)
       }
@@ -186,7 +259,8 @@
         const reader: any = new FileReader()
         reader.onload = () => {
           const data = JSON.parse(reader.result)
-          dataTemplate.value = data.map((data: any) => computeClassTemplate(data))
+          // dataTemplate.value = data.map((data: any) => computeClassTemplate(data))
+          listTemplateFile.value = data
           return data
         }
         reader.readAsText(file)
@@ -266,6 +340,7 @@
           })
         })
         listContentMatch.value = listMatch
+        clickSentence(listMatch[0])
         // const a = templateRef.value[listMatch[1].fileIndex].children[listMatch[1].contentIndex]
         // console.log({
         //   div: templateRef.value[listMatch[1].fileIndex].children[listMatch[1].contentIndex],
@@ -274,31 +349,8 @@
       }
       const clickSentence = (data: any) => {
         const sentence = templateRef.value[data.fileIndex].children[data.contentIndex]
-        templateScrollRef.value.setScrollPosition('vertical', sentence.offsetTop)
+        templateScrollRef.value.setScrollPosition('vertical', sentence.offsetTop - 50, 500)
       }
-
-      // const selectedDataTemplate = (data: any, idx) => {
-      //   const defaultClassList = ['q-mr-xs bg-yellow cursor-pointer']
-      //   const selectedClassList = ['q-mr-xs bg-positive cursor-pointer']
-      //   const testChildren = [...testRef.value.children]
-      //   const foundIndexTest = testData.findIndex((ctx) => ctx.matchId == data.matchId)
-      //   testChildren.map((child) => {
-      //     if (child.classList.length === 3) {
-      //       child.classList = defaultClassList
-      //     }
-      //   })
-      //   testChildren[foundIndexTest].classList = selectedClassList
-
-      //   const templateChildren = [...templateRef.value.children]
-      //   const foundIndexTemplate = templateData.findIndex((ctx) => ctx.matchId == data.matchId)
-      //   templateChildren.map((child) => {
-      //     if (child.classList.length === 3) {
-      //       child.classList = defaultClassList
-      //     }
-      //   })
-      //   templateChildren[foundIndexTemplate].classList = selectedClassList
-      //   console.log({ div: testRef.value })
-      // }
 
       const resetMatchTest = () => {
         dataTest.value.data.map((contentDataTest: any) => {
@@ -311,15 +363,45 @@
         dataTemplate.value.map((file: any) => {
           file.data.map((contentDataTemplate: any) => {
             if (contentDataTemplate.class) {
-              contentDataTemplate.class = 'bg-yellow-5 cursor-pointer'
+              contentDataTemplate.class = null
             }
           })
         })
+      }
+      const resetSelectedFile = () => {
+        listTestFile?.value?.map((file: any) => {
+          file.class = null
+        })
+      }
+
+      const selectedFileTest = (file: any, index: number) => {
+        resetSelectedFile()
+        listTestFile.value[index].class = 'bg-blue'
+        dataTest.value = computeClass(file)
+        listTemplateFileMap.value = file.info.map((info: any) => {
+          return {
+            ...info,
+            data: {
+              ...listTemplateFile.value.find((file: any) => file.id === info.id),
+            },
+          }
+        })
+      }
+      const selectedFileTemplate = (file: any, callback: () => void) => {
+        console.log(file)
+        callback()
+        file.data.data.map((content: any) => {
+          content.class = null
+        })
+        dataTemplate.value = [file.data]
       }
 
       const splitterModel = ref(50)
 
       return {
+        listTestFile,
+        listTemplateFileMap,
+        dialogPick,
         splitterModel,
         dataTest,
         dataTemplate,
@@ -332,6 +414,8 @@
         listContentMatch,
         testScrollRef,
         templateScrollRef,
+        selectedFileTest,
+        selectedFileTemplate,
 
         authStore,
         backRouter,
