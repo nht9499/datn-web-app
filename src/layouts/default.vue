@@ -26,15 +26,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-footer class="v-bg text-grey-9">
-      <div class="text-center text-caption q-py-xs">
-        COPYRIGHT © {{ $filters.dateFormat(META.date, 'YYYY') }}
-        <a class="text-primary" href="https://sk-global.biz/" target="_blank">
-          SK-GLOBAL JOINT STOCK COMPANY
-        </a>
-        <span>, All rights Reserved</span>
-      </div>
-    </q-footer>
+    <q-footer class="v-bg text-grey-9"> </q-footer>
 
     <q-page-container class="app-content-container q-px-xl">
       <router-view v-slot="{ Component, route }">
