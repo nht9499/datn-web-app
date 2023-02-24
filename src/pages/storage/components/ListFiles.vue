@@ -68,7 +68,7 @@
                   <q-item-section class="text-body2">Thông tin chi tiết</q-item-section>
                 </q-item> -->
                 <q-item
-                  :disable="props.row.sharedToSystem"
+                  :disable="props.row.sharedToSystem || authStore.role === 'staff'"
                   dense
                   clickable
                   v-close-popup

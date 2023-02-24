@@ -11,7 +11,11 @@
         <p class="text-h6 q-mb-sm">Hãy chọn kho ngữ liệu bạn muốn kiểm tra</p>
         <div>
           <div>
-            <q-radio v-model="templateSelected" val="own" label="Kho ngữ liệu của bạn" />
+            <q-radio
+              :disable="userDetail?.data?.length === 0"
+              v-model="templateSelected"
+              val="own"
+              label="Kho ngữ liệu của bạn" />
           </div>
           <div>
             <q-radio v-model="templateSelected" val="system" label="Kho ngữ liệu của hệ thống" />
@@ -36,6 +40,7 @@
           </div>
           <div>
             <q-radio
+              :disable="userDetail?.organizationList?.length === 0"
               v-model="templateSelected"
               val="organization"
               label="Kho ngữ liệu của tổ chức" />
@@ -155,6 +160,12 @@
       const numberOfResult = ref(1)
 
       const disableNext = computed(() => {
+        if (
+          step.value === 1 &&
+          userDetail?.value?.data?.length === 0 &&
+          templateSelected.value === 'own'
+        )
+          return true
         if (step.value === 1 && templateSelected.value === 'organization' && !orgSelected.value)
           return true
         if (step.value === 2 && !files.value) return true
@@ -303,6 +314,7 @@
       onMounted(async () => {
         showGlobalLoading()
         await fetchUserById(authStore.uid)
+        console.log(userDetail.value)
         hideGlobalLoading()
       })
       return {
