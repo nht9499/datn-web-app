@@ -13,7 +13,7 @@
     </div>
   </div>
   <q-card class="q-mt-md">
-    <q-card-section>
+    <q-card-section v-if="!dialogPick">
       <q-card-section>
         <div class="row">
           <div class="col">
@@ -28,7 +28,7 @@
                 </div>
               </div>
             </div>
-            <div v-if="contentSelected" class="q-mx-xl q-mt-lg">
+            <div v-if="contentSelected && !dialogPick" class="q-mx-xl q-mt-lg">
               <div class="text-center">
                 <span class="text-bold text-h6">Câu đã chọn</span>
               </div>
@@ -44,12 +44,13 @@
               <q-btn
                 outline
                 no-caps
+                size="lg"
                 color="primary"
                 label="Chọn file khác"
                 @click="dialogPick = true"></q-btn>
             </div>
-            <div v-if="listContentMatch?.length > 0">
-              <div class="text-center q-pt-md">
+            <div v-if="listContentMatch?.length > 0 && !dialogPick">
+              <div class="text-center q-pt-xs">
                 <span class="text-bold text-h6">Câu tương đồng</span>
               </div>
               <q-scroll-area visible style="height: 100px">
@@ -388,12 +389,14 @@
         })
       }
       const selectedFileTemplate = (file: any, callback: () => void) => {
-        console.log(file)
         callback()
         file.data.data.map((content: any) => {
           content.class = null
         })
         dataTemplate.value = [file.data]
+      }
+      const onBack = () => {
+        router.back()
       }
 
       const splitterModel = ref(50)
@@ -416,6 +419,7 @@
         templateScrollRef,
         selectedFileTest,
         selectedFileTemplate,
+        onBack,
 
         authStore,
         backRouter,

@@ -39,6 +39,15 @@
         </q-td>
       </template>
 
+      <template #body-cell-language="props">
+        <q-td :props="props">
+          <span v-for="(lang, idx) in props.row.language" :key="lang.id"
+            >{{ $filters.getSimilarMethod(lang) }}
+            <span v-if="idx < props.row.language.length - 1">, </span>
+          </span>
+        </q-td>
+      </template>
+
       <template #body-cell-actions="props">
         <q-td :props="props" style="min-width: 100px; padding: 0px">
           <q-btn
@@ -136,6 +145,13 @@
           align: 'center',
           field: (row: AnyObject) => row?.type,
         },
+        {
+          name: 'language',
+          required: true,
+          label: 'Ngôn ngữ',
+          align: 'center',
+          field: (row: AnyObject) => row?.language,
+        },
         // {
         //   name: 'percent',
         //   required: true,
@@ -146,16 +162,13 @@
         { name: 'actions', align: 'center', label: '', field: 'name' },
       ])
 
-      const onLoadmore = () => {
-        fetchDoctors(route.query, true)
-      }
-
       const clickEdit = (row: AnyObject) => {
         router.push({ name: 'histories-id', params: { id: row.uid } })
       }
       onMounted(async () => {
         showGlobalLoading()
         await fetchTests()
+        console.log(listTests.value)
         hideGlobalLoading()
       })
       return {
@@ -164,7 +177,6 @@
         pagination,
         columns,
         clickEdit,
-        onLoadmore,
         Status,
         defaultAvatar,
         listTests,
