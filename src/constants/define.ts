@@ -16,7 +16,8 @@ import {
   ShopStatus,
   DoctorStatus,
   TransferStatus,
-  TestStatus
+  TestStatus,
+  TestType,
 } from './enums'
 
 export const auth = {
@@ -315,5 +316,13 @@ export const testStatus = {
     [TestStatus.PROCESSING]: 'orange',
     [TestStatus.DONE]: 'positive',
     [TestStatus.FAIL]: 'negative',
+  } as AnyObject,
+}
+export const testType = {
+  label: {
+    [TestType.own]: 'Của bạn',
+    [TestType.internet]: 'Internet',
+    [TestType.organization]: 'Tổ chức',
+    [TestType.system]: 'Hệ thống',
   } as AnyObject,
 }

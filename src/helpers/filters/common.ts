@@ -2,7 +2,7 @@ import { format } from 'quasar'
 import dayjs from 'dayjs'
 import 'dayjs/locale/vi'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import { auth } from '@/constants/define'
+import { auth, testType } from '@/constants/define'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
 import weekOfYear from 'dayjs/plugin/weekOfYear'
@@ -83,6 +83,9 @@ export const inject = () => ({
   },
   getRoleColor(key: string) {
     return auth.color?.[key] ?? ''
+  },
+  getTestType(key: string) {
+    return testType.label?.[key] ?? ''
   },
   currencyFormat(value: string | number, showCurrency = true) {
     const maximumSignificantDigits = `${value}`.length - 3

@@ -245,3 +245,11 @@ export enum TestStatus {
   DONE = 'done',
   FAIL = 'fail',
 }
+
+export const testTypelist = ['own', 'internet', 'organization', 'system']
+export enum TestType {
+  own = 'own',
+  internet = 'internet',
+  organization = 'organization',
+  system = 'system',
+}

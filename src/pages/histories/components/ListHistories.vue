@@ -30,9 +30,12 @@
         </q-td>
       </template>
 
-      <template #body-cell-percent="props">
+      <template #body-cell-type="props">
         <q-td :props="props">
-          {{ props.row.matchPercent + ' %' }}
+          {{ $filters.getTestType(props.row.type)
+          }}<span v-if="props.row.type === 'organization'"
+            >: {{ props.row.organizationSnapshot.name }}</span
+          >
         </q-td>
       </template>
 
@@ -127,12 +130,19 @@
           field: (row: AnyObject) => row?.status,
         },
         {
-          name: 'percent',
+          name: 'type',
           required: true,
-          label: 'Phần trăm tương đồng',
+          label: 'Kho ngữ liệu',
           align: 'center',
-          field: (row: AnyObject) => row?.matchPercent,
+          field: (row: AnyObject) => row?.type,
         },
+        // {
+        //   name: 'percent',
+        //   required: true,
+        //   label: 'Phần trăm tương đồng',
+        //   align: 'center',
+        //   field: (row: AnyObject) => row?.matchPercent,
+        // },
         { name: 'actions', align: 'center', label: '', field: 'name' },
       ])
 
