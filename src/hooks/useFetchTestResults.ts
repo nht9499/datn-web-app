@@ -16,6 +16,7 @@ import {
   DocumentData,
   startAfter,
   Timestamp,
+  onSnapshot,
 } from 'firebase/firestore'
 import { addWhen } from '@/util/object'
 import { testApi } from 'src/api/test'
@@ -34,6 +35,7 @@ export const useFetchTestResult = () => {
   const doctorPrivate = ref({})
   const limitDoc = 20
   const resultData = ref()
+  const listSubscribe = ref()
 
   const isLoadmore = computed(() => !!lastVisible.value?.id)
 
@@ -52,6 +54,17 @@ export const useFetchTestResult = () => {
       orderBy(sortAbleTo[0], sortAbleTo[1]),
       ...addWhen(lastVisible.value, startAfter(lastVisible.value)),
     ]
+  }
+
+  const subscribeResult = () => {
+    if (authStore?.uid) {
+      const composeCondition = [where('userUid', '==', authStore.uid), orderBy('updatedAt', 'desc')]
+      const docRef = collection(db, 'testResults')
+      const q = query(docRef, ...composeCondition)
+      return onSnapshot(q, (snapshot) => {
+        listSubscribe.value = snapshot.docs.map(transformDoctorsResult)
+      })
+    }
   }
 
   const fetchTests = async (queryParams: DoctorQueryParams = {}, isLoadmore = false) => {
@@ -136,5 +149,7 @@ export const useFetchTestResult = () => {
     executeTest,
     resultData,
     getTestResultById,
+    subscribeResult,
+    listSubscribe,
   }
 }

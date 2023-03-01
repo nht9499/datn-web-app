@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-  import { ref, defineComponent, onBeforeUnmount, onMounted } from 'vue'
+  import { ref, defineComponent, onBeforeUnmount, onMounted, watch } from 'vue'
   import {
     EssentialHorizontalLink,
     UserMenu,
@@ -57,7 +57,9 @@
   import { useMenus } from '@/hooks/useMenu'
   import { useEnhancer } from '@/app/enhancer'
   import { useAuthenticate } from '@/hooks/useAuthenticate'
+  import { useFetchTestResult } from '@/hooks/useFetchTestResults'
   import { META } from '@/configs/app.config'
+  import { useQuasar } from 'quasar'
 
   export default defineComponent({
     name: 'DefaultLayout',
@@ -70,11 +72,14 @@
     },
     setup() {
       const eventBus = useEvents()
-      const { authStore } = useEnhancer()
+      const { authStore, router } = useEnhancer()
+      const $q = useQuasar()
 
-      // const { staffPingAvailable, clearPingAvailable } = useAuthenticate()
+      const { subscribeResult, listSubscribe } = useFetchTestResult()
       const { essentialLinks } = useMenus(authStore.role)
       const googleMap = ref()
+      const unsubscribeResult = ref()
+      const difList = ref()
 
       const onPickMap = (payload: AnyObject) => {
         eventBus.emit(EventType.PICK_MAP, payload)
@@ -85,15 +90,55 @@
         eventBus.on(EventType.SHOW_MAP, (payload) => {
           googleMap.value.show(payload)
         })
+        unsubscribeResult.value = subscribeResult()
         // if (!authStore.isAdmin) {
         //   staffPingAvailable()
         // }
       })
+      onBeforeUnmount(() => {
+        if (unsubscribeResult.value) {
+          unsubscribeResult.value()
+        }
+      })
 
-      // onBeforeUnmount(() => {
-      //   eventBus.off(EventType.SHOW_MAP)
-      //   clearPingAvailable()
-      // })
+      watch(listSubscribe, (newList, prevList) => {
+        const newNoti = []
+        if (!prevList) return
+        newList?.forEach((item) => {
+          const check = prevList?.find((el) => el.createdAt === item.createdAt)
+          if (!check) {
+            newNoti.push(item)
+          }
+        })
+        difList.value = newNoti
+        setTimeout(pushNoti, 500)
+      })
+      const pushNoti = () => {
+        difList.value.forEach((item: any) => {
+          $q.notify({
+            position: 'top-right',
+            color: 'white',
+            textColor: 'black',
+            icon: 'check_circle',
+            timeout: 7000,
+            iconColor: 'primary',
+            message: 'Kiểm tra tương đồng đã hoàn thành',
+            actions: [
+              {
+                label: 'Đến xem',
+                color: 'primary',
+                handler: () => {
+                  handleItem(item)
+                },
+              },
+            ],
+          })
+        })
+      }
+
+      const handleItem = (item: any) => {
+        router.push({ name: 'histories-id', params: { id: item.uid } })
+      }
 
       return {
         META,
