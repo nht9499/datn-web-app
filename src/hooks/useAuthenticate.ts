@@ -90,7 +90,7 @@ export const useAuthenticate = () => {
     } catch (error) {
       console.log(error)
       // const { message } = error as { message: string }
-      showNotify('Email hoặc mật khẩu không đúng', 'negative')
+      // showNotify('Email hoặc mật khẩu không đúng', 'negative')
     }
     setLoading(false)
   }
