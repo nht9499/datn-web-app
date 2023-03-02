@@ -270,6 +270,7 @@
       const computeClass = (file: any) => {
         file.data.map((data: any) => {
           data.score.map((score: any) => {
+            // TODO: compare document id
             if (score.score > minScore.value / 100) {
               data.class = 'bg-yellow-5 cursor-pointer'
               return
@@ -280,20 +281,20 @@
         })
         return file
       }
-      const computeClassTemplate = (file: any) => {
-        file.data.map((data: any) => {
-          if (data.score > minScore.value / 100) {
-            data.class = 'bg-yellow-5'
-          } else {
-            data.class = null
-          }
-        })
-        return file
-      }
+      // const computeClassTemplate = (file: any) => {
+      //   file.data.map((data: any) => {
+      //     if (data.score > minScore.value / 100) {
+      //       data.class = 'bg-yellow-5'
+      //     } else {
+      //       data.class = null
+      //     }
+      //   })
+      //   return file
+      // }
 
       const apply = () => {
         dataTest.value = computeClass(dataTest.value)
-        dataTemplate.value = dataTemplate.value.map((data: any) => computeClassTemplate(data))
+        // dataTemplate.value = dataTemplate.value.map((data: any) => computeClassTemplate(data))
       }
 
       const testRef = ref()
@@ -394,6 +395,7 @@
           content.class = null
         })
         dataTemplate.value = [file.data]
+        apply()
       }
       const onBack = () => {
         router.back()
