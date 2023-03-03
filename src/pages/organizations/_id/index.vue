@@ -206,14 +206,14 @@
   <q-dialog v-model="dialogAddMember">
     <q-card class="q-pa-md">
       <q-card-section>
-        Nhập ID của người dùng để thêm thành viên
-        <q-input v-model="addMemberUid" label="ID người dùng" />
+        Nhập email của người dùng để thêm thành viên
+        <q-input v-model="addMemberEmail" label="Email" />
       </q-card-section>
       <q-card-action class="q-pl-md">
         <q-btn
           no-caps
           @click="clickAddMember"
-          :disable="!addMemberUid"
+          :disable="!addMemberEmail"
           color="primary"
           label="Thêm mới" />
       </q-card-action>
@@ -222,14 +222,14 @@
   <q-dialog v-model="dialogAddAdmin">
     <q-card class="q-pa-md">
       <q-card-section>
-        Nhập ID của người dùng để thêm người quản lý
-        <q-input v-model="addAdminUid" label="ID người dùng" />
+        Nhập email của người dùng để thêm người quản lý
+        <q-input v-model="addAdminEmail" label="Email" />
       </q-card-section>
       <q-card-action class="q-pl-md">
         <q-btn
           no-caps
           @click="clickAddAdmin"
-          :disable="!addAdminUid"
+          :disable="!addAdminEmail"
           color="primary"
           label="Thêm mới" />
       </q-card-action>
@@ -294,9 +294,9 @@
       const listTemplateUrls = ref()
       const dataMember = ref()
       const dialogAddMember = ref(false)
-      const addMemberUid = ref()
+      const addMemberEmail = ref()
       const dialogAddAdmin = ref(false)
-      const addAdminUid = ref()
+      const addAdminEmail = ref()
 
       const mockData = [
         {
@@ -446,18 +446,18 @@
       }
 
       const clickAddMember = async () => {
-        if (!addMemberUid.value) return
+        if (!addMemberEmail.value) return
         showGlobalLoading()
-        await addMember(route.params.id as string, addMemberUid.value)
+        await addMember(route.params.id as string, addMemberEmail.value)
         dialogAddMember.value = false
         await fetchOrganizationById(route.params.id as string)
         computeDataMember()
         hideGlobalLoading()
       }
       const clickAddAdmin = async () => {
-        if (!addAdminUid.value) return
+        if (!addAdminEmail.value) return
         showGlobalLoading()
-        await addAdmin(route.params.id as string, addAdminUid.value)
+        await addAdmin(route.params.id as string, addAdminEmail.value)
         dialogAddAdmin.value = false
         await fetchOrganizationById(route.params.id as string)
         computeDataMember()
@@ -578,9 +578,9 @@
       )
       return {
         dialogAddMember,
-        addMemberUid,
+        addMemberEmail,
         dialogAddAdmin,
-        addAdminUid,
+        addAdminEmail,
         clickAddMember,
         clickAddAdmin,
         handleRemoveMember,

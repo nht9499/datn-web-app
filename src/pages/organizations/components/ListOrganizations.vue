@@ -98,10 +98,10 @@
       <q-card-section v-else class="row">
         <q-card-section class="col">
           <span
-            >Bạn chưa tham gia tổ chức nào, hãy cung cấp ID của bạn cho quản lý của tổ chức</span
+            >Bạn chưa tham gia tổ chức nào, hãy cung cấp email của bạn cho quản lý của tổ chức</span
           >
           <div style="width: 300px">
-            <q-input readonly v-model="uidDisplay" label="ID của bạn" />
+            <q-input readonly v-model="emailDisplay" label="Email của bạn" />
           </div>
         </q-card-section>
         <span class="bg-white" style="height: 25px; position: relative; left: 15px; top: 50px"
@@ -206,7 +206,7 @@
       const organizationTelephone = ref(null)
       const organizationEmail = ref(null)
       const dialogJoin = ref(false)
-      const uidDisplay = ref()
+      const emailDisplay = ref()
 
       const columns: ComputedRef<QTableProps['columns']> = computed(() => [
         {
@@ -275,7 +275,7 @@
       onMounted(async () => {
         showGlobalLoading()
         await fetchUserById(authStore.uid)
-        uidDisplay.value = userDetail.value.uid
+        emailDisplay.value = userDetail.value.email
         hideGlobalLoading()
       })
       // watch(
@@ -291,7 +291,7 @@
       //   }
       // )
       return {
-        uidDisplay,
+        emailDisplay,
         authStore,
         pagination,
         columns,

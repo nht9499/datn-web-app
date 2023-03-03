@@ -8,10 +8,10 @@ export const organizationApi = {
     api.post(`/organizations/${organizationUid}/file-remove/${fileId}`),
   shareFile: (organizationUid: string, payload: any) =>
     api.post(`/organizations/${organizationUid}/file-share`, payload),
-  addMember: (organizationUid: string, userUid: string) =>
-    api.post(`/organizations/${organizationUid}/add-member/${userUid}`),
-  addAdmin: (organizationUid: string, userUid: string) =>
-    api.post(`/organizations/${organizationUid}/add-admin/${userUid}`),
+  addMember: (organizationUid: string, email: string) =>
+    api.post(`/organizations/${organizationUid}/add-member-by-email`, { email }),
+  addAdmin: (organizationUid: string, email: string) =>
+    api.post(`/organizations/${organizationUid}/add-admin-by-email`, { email }),
   removeMember: (organizationUid: string, userUid: string) =>
     api.post(`/organizations/${organizationUid}/remove-member/${userUid}`),
   removeAdmin: (organizationUid: string, userUid: string) =>

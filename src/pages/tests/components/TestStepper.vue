@@ -102,7 +102,8 @@
       </q-step>
 
       <q-step :name="4" title="Hoàn thành" icon="add_comment" style="min-height: 200px">
-        <div>Cảm ơn bạn đã sử dụng hệ thống</div>
+        <p>Chúng tôi sẽ thông báo cho bạn sau khi hoàn thành kiểm tra.</p>
+        <p>Cảm ơn bạn đã sử dụng hệ thống.</p>
       </q-step>
 
       <template #navigation>
