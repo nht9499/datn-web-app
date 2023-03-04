@@ -5,11 +5,13 @@ import { AppRole, COLLECTION_NAME } from '@/constants/enums'
 import { useAsyncCall } from './useAsyncCall'
 import { getDoc, doc } from 'firebase/firestore'
 import { userApi } from '@/api/user'
+import { useEnhancer } from '@/app/enhancer'
 
 export const useFetchUser = () => {
   const { loading, setLoading, errorMsg, setErrorMsg } = useAsyncCall()
   const lastVisible = ref<AnyObject | null>(null)
   const userDetail = ref()
+  const { showNotify } = useEnhancer()
 
   const isLoadmore = computed(() => !!lastVisible.value?.id)
 
@@ -31,7 +33,12 @@ export const useFetchUser = () => {
     setLoading(false)
   }
   const joinOrganization = async (organizationUid: string) => {
-    await userApi.joinOrganization(organizationUid)
+    try{
+      await userApi.joinOrganization(organizationUid)
+    }catch(err) {
+      console.log(err)
+      showNotify('Không thể thêm mới', 'negative')
+    }
   }
 
   const uploadFile = async (payload: any) => {

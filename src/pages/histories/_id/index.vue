@@ -268,33 +268,34 @@
       }
 
       const computeClass = (file: any) => {
-        file.data.map((data: any) => {
-          data.score.map((score: any) => {
-            // TODO: compare document id
-            if (score.score > minScore.value / 100) {
+        if (dataTemplate.value) {
+          file.data.map((data: any) => {
+            const foundSentence = data.score.find((score: any) => {
+              return (
+                score.score > minScore.value / 100 &&
+                score.document_id === dataTemplate.value[0]?.id
+              )
+            })
+            if (foundSentence) {
               data.class = 'bg-yellow-5 cursor-pointer'
-              return
             } else {
               data.class = null
             }
           })
+        }
+        return file
+      }
+      const computeClassTemplate = (file: any) => {
+        file.data.map((data: any) => {
+          data.class = null
         })
         return file
       }
-      // const computeClassTemplate = (file: any) => {
-      //   file.data.map((data: any) => {
-      //     if (data.score > minScore.value / 100) {
-      //       data.class = 'bg-yellow-5'
-      //     } else {
-      //       data.class = null
-      //     }
-      //   })
-      //   return file
-      // }
 
       const apply = () => {
         dataTest.value = computeClass(dataTest.value)
-        // dataTemplate.value = dataTemplate.value.map((data: any) => computeClassTemplate(data))
+        resetSelectedSenetence()
+        dataTemplate.value = dataTemplate.value.map((data: any) => computeClassTemplate(data))
       }
 
       const testRef = ref()
@@ -389,16 +390,22 @@
           }
         })
       }
-      const selectedFileTemplate = (file: any, callback: () => void) => {
+      const selectedFileTemplate = async (file: any, callback: () => void) => {
         callback()
-        file.data.data.map((content: any) => {
-          content.class = null
-        })
+        // await file.data.data.map((content: any) => {
+        //   content.class = null
+        // })
         dataTemplate.value = [file.data]
         apply()
       }
       const onBack = () => {
         router.back()
+      }
+      const resetSelectedSenetence = () => {
+        listContentMatch.value = null
+        contentSelected.value = null
+        templateScrollRef.value.setScrollPosition('vertical', 0, 500)
+        testScrollRef.value.setScrollPosition('vertical', 0, 500)
       }
 
       const splitterModel = ref(50)

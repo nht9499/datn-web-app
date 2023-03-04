@@ -6,11 +6,14 @@ import { useAsyncCall } from './useAsyncCall'
 import { getDoc, doc } from 'firebase/firestore'
 import { userApi } from '@/api/user'
 import { organizationApi } from '@/api/organization'
+import { useEnhancer } from '@/app/enhancer'
 
 export const useFetchOrganization = () => {
   const { loading, setLoading, errorMsg, setErrorMsg } = useAsyncCall()
   const lastVisible = ref<AnyObject | null>(null)
   const organizationDetail = ref()
+  const { showNotify } = useEnhancer()
+
 
   const isLoadmore = computed(() => !!lastVisible.value?.id)
 
@@ -35,16 +38,36 @@ export const useFetchOrganization = () => {
     await organizationApi.create(payload)
   }
   const addMember = async (organizationUid: string, userUid: string) => {
-    await organizationApi.addMember(organizationUid, userUid)
+    try{
+      await organizationApi.addMember(organizationUid, userUid)
+    }catch(err) {
+      console.log(err)
+      showNotify('Không thể thêm mới', 'negative')
+    }
   }
   const removeMember = async (organizationUid: string, userUid: string) => {
-    await organizationApi.removeMember(organizationUid, userUid)
+    try{
+      await organizationApi.removeMember(organizationUid, userUid)
+    }catch(err) {
+      console.log(err)
+      showNotify('Không thể xóa', 'negative')
+    }
   }
   const addAdmin = async (organizationUid: string, userUid: string) => {
-    await organizationApi.addAdmin(organizationUid, userUid)
+    try{
+      await organizationApi.addAdmin(organizationUid, userUid)
+    }catch(err) {
+      console.log(err)
+      showNotify('Không thể thêm mới', 'negative')
+    }
   }
   const removeAdmin = async (organizationUid: string, userUid: string) => {
-    await organizationApi.removeAdmin(organizationUid, userUid)
+    try{
+      await organizationApi.removeAdmin(organizationUid, userUid)
+    }catch(err) {
+      console.log(err)
+      showNotify('Không thể xóa', 'negative')
+    }
   }
 
   const uploadFile = async (organizationUid: string, payload: any) => {

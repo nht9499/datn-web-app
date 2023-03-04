@@ -82,7 +82,7 @@
             <span>{{ file.name }}</span>
           </div>
         </div>
-        <q-file class="hidden" multiple ref="filePicker" v-model="files" />
+        <q-file accept=".pdf, .docx" class="hidden" multiple ref="filePicker" v-model="files" />
       </q-step>
 
       <q-step

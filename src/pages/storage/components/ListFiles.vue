@@ -123,7 +123,7 @@
             <span>{{ file.name }}</span>
           </div>
         </div>
-        <q-file class="hidden" multiple ref="filePicker" v-model="files" />
+        <q-file accept=".pdf, .docx" class="hidden" multiple ref="filePicker" v-model="files" />
       </q-card-section>
       <q-card-section>
         <q-btn
